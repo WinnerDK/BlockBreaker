@@ -2,27 +2,35 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BallController : MonoBehaviour {
+public class BallController : MonoBehaviour
+{
     // params
-    [SerializeField] PaddleController paddle;
+    [SerializeField]
+    PaddleController paddle;
+    [SerializeField]
+    AudioClip[] ballSounds;
 
     // game state
     Vector2 paddleToBallVector;
     bool isStart = false;
+    AudioSource audioSource;
 
-	// Use this for initialization
-	void Start () {
+    // Use this for initialization
+    void Start()
+    {
         paddleToBallVector = transform.position - paddle.transform.position;
-	}
-	
-	// Update is called once per frame
-	void Update () {
+        audioSource = GetComponent<AudioSource>();
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
         if (!isStart)
         {
-            LockBallToPaddle();
+            //LockBallToPaddle();
             LauchBallOnMouseClick();
         }
-	}
+    }
 
     private void LockBallToPaddle()
     {
@@ -37,6 +45,15 @@ public class BallController : MonoBehaviour {
         {
             isStart = true;
             GetComponent<Rigidbody2D>().velocity = new Vector2(2f, 15f);
+        }
+    }
+
+    private void OnCollisionEnter2D()
+    {
+        if (isStart)
+        {
+            AudioClip clip = ballSounds[UnityEngine.Random.Range(0, ballSounds.Length)];
+            audioSource.PlayOneShot(clip);
         }
     }
 }
